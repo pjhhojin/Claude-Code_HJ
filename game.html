@@ -81,50 +81,13 @@
     #start-screen { text-align: center; }
 
     .start-logo {
-      font-size: 3.2rem;
+      font-size: 3.8rem;
       font-weight: 900;
       letter-spacing: -1px;
       background: linear-gradient(135deg, #6c63ff, #e040fb);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
-    }
-
-    .start-sub {
-      font-size: 0.9rem;
-      color: #7070a0;
-      margin-bottom: 36px;
-      line-height: 1.7;
-    }
-
-    .rules {
-      background: #161628;
-      border: 1px solid #2a2a4a;
-      border-radius: 16px;
-      padding: 20px 24px;
-      margin-bottom: 36px;
-      text-align: left;
-    }
-    .rules h3 {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #6c63ff;
-      margin-bottom: 12px;
-    }
-    .rules li {
-      list-style: none;
-      font-size: 0.88rem;
-      color: #a0a0c0;
-      line-height: 2;
-      padding-left: 16px;
-      position: relative;
-    }
-    .rules li::before {
-      content: '▸';
-      position: absolute;
-      left: 0;
-      color: #6c63ff;
+      margin-bottom: 40px;
     }
 
     /* ══════════════════════════════
@@ -206,11 +169,11 @@
     }
 
     /* 선택지 카드 */
-    .choices { display: flex; gap: 12px; margin-bottom: 20px; }
+    .choices { display: flex; gap: 8px; margin-bottom: 20px; }
 
     .card {
       flex: 1;
-      min-height: 120px;
+      min-height: 110px;
       border-radius: 16px;
       border: 2px solid #2a2a4a;
       background: #131328;
@@ -321,17 +284,7 @@
 
 <!-- ── 시작 화면 ── -->
 <div class="screen active" id="start-screen">
-  <div class="start-logo">선택의 게임</div>
-  <p class="start-sub">매 턴, 세 가지 선택지 중 하나를 고르세요</p>
-  <div class="rules">
-    <h3>게임 규칙</h3>
-    <ul>
-      <li>각 선택지의 점수는 숨겨져 있습니다</li>
-      <li>선택 후 결과가 공개되며 점수가 변합니다</li>
-      <li>점수 획득 : +1 ~ +10 &nbsp;|&nbsp; 점수 손실 : -1 ~ -5</li>
-      <li>점수가 100에 도달하거나 10턴이 끝나면 종료</li>
-    </ul>
-  </div>
+  <div class="start-logo">님운몇?</div>
   <button class="btn" onclick="startGame()">게임 시작</button>
 </div>
 
@@ -403,14 +356,14 @@
     el.classList.add('active');
   }
 
-  /* ── 선택지 생성 (+1~10, -1~-5, 양수 확률 70%) ── */
+  /* ── 선택지 생성 (+1~10, -1~-7, 양수 확률 65%) ── */
   function makeChoices() {
     let vals;
     do {
-      vals = Array.from({ length: 3 }, () =>
-        Math.random() < 0.7
+      vals = Array.from({ length: 4 }, () =>
+        Math.random() < 0.65
           ? Math.floor(Math.random() * 10) + 1          // +1 ~ +10
-          : -(Math.floor(Math.random() * 5) + 1)        // -1 ~ -5
+          : -(Math.floor(Math.random() * 7) + 1)        // -1 ~ -7
       );
     } while (!validChoices(vals));
     return vals;
@@ -428,7 +381,7 @@
   function renderChoices() {
     const wrap = document.getElementById('choices');
     wrap.innerHTML = '';
-    ['A', 'B', 'C'].forEach((lbl, i) => {
+    ['A', 'B', 'C', 'D'].forEach((lbl, i) => {
       const card = document.createElement('div');
       card.className = 'card';
       card.id = `card-${i}`;
@@ -517,13 +470,8 @@
   /* ── 게임 종료 ── */
   function endGame(clear) {
     document.getElementById('end-score').textContent = score;
-    if (clear) {
-      document.getElementById('end-title').textContent = '🎉 클리어!';
-      document.getElementById('end-msg').textContent   = `${turn}턴 만에 100점을 달성했습니다!\n대단해요!`;
-    } else {
-      document.getElementById('end-title').textContent = '게임 종료';
-      document.getElementById('end-msg').textContent   = `10턴이 모두 끝났습니다.\n최종 점수: ${score}점`;
-    }
+    document.getElementById('end-title').textContent = clear ? '🎉 클리어!' : '게임 종료';
+    document.getElementById('end-msg').textContent   = score >= 50 ? '님 혹시 신임?' : '허~~접♥';
     showScreen('end-screen');
   }
 
