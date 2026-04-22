@@ -328,7 +328,7 @@
     <ul>
       <li>각 선택지의 점수는 숨겨져 있습니다</li>
       <li>선택 후 결과가 공개되며 점수가 변합니다</li>
-      <li>점수 획득 : +1 ~ +10 &nbsp;|&nbsp; 점수 손실 : -1 ~ -9</li>
+      <li>점수 획득 : +1 ~ +10 &nbsp;|&nbsp; 점수 손실 : -1 ~ -5</li>
       <li>점수가 100에 도달하거나 10턴이 끝나면 종료</li>
     </ul>
   </div>
@@ -403,14 +403,14 @@
     el.classList.add('active');
   }
 
-  /* ── 선택지 생성 (+1~10, -1~-9, 항상 최고+ >= 최고- 절댓값 보장) ── */
+  /* ── 선택지 생성 (+1~10, -1~-5, 양수 확률 70%) ── */
   function makeChoices() {
     let vals;
     do {
       vals = Array.from({ length: 3 }, () =>
-        Math.random() < 0.5
+        Math.random() < 0.7
           ? Math.floor(Math.random() * 10) + 1          // +1 ~ +10
-          : -(Math.floor(Math.random() * 9) + 1)        // -1 ~ -9
+          : -(Math.floor(Math.random() * 5) + 1)        // -1 ~ -5
       );
     } while (!validChoices(vals));
     return vals;
