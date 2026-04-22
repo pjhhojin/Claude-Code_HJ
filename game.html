@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>선택의 게임</title>
+  <title>님운몇?</title>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -18,129 +18,118 @@
       overflow: hidden;
     }
 
-    /* ── 배경 파티클 ── */
-    .bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-    }
+    .bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
     .bg span {
       position: absolute;
       border-radius: 50%;
       opacity: 0.08;
-      animation: float linear infinite;
+      animation: bgfloat linear infinite;
     }
-
-    @keyframes float {
+    @keyframes bgfloat {
       0%   { transform: translateY(110vh) scale(0); opacity: 0; }
       10%  { opacity: 0.12; }
       90%  { opacity: 0.08; }
       100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
     }
 
-    /* ── 화면 컨테이너 ── */
     .screen {
       display: none;
-      width: min(480px, 95vw);
-      padding: 32px 24px;
+      width: min(500px, 95vw);
+      padding: 28px 20px;
       position: relative;
       z-index: 1;
       animation: fadeIn 0.35s ease;
     }
     .screen.active { display: block; }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(14px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── 공통 버튼 ── */
+    /* ── Buttons ── */
     .btn {
       display: inline-block;
-      padding: 14px 40px;
+      padding: 13px 36px;
       border: none;
       border-radius: 50px;
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
-      background: linear-gradient(135deg, #6c63ff 0%, #9b59b6 100%);
       color: #fff;
       letter-spacing: 0.03em;
     }
-    .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 28px rgba(108, 99, 255, 0.45);
-    }
+    .btn:hover  { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(108,99,255,0.4); }
     .btn:active { transform: translateY(0); }
+    .btn-purple { background: linear-gradient(135deg, #6c63ff 0%, #9b59b6 100%); }
+    .btn-gold   { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
 
-    /* ══════════════════════════════
-       시작 화면
-    ══════════════════════════════ */
+    /* ── Start Screen ── */
     #start-screen { text-align: center; }
-
     .start-logo {
-      font-size: 3.8rem;
+      font-size: 4rem;
       font-weight: 900;
       letter-spacing: -1px;
       background: linear-gradient(135deg, #6c63ff, #e040fb);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 40px;
+      margin-bottom: 44px;
     }
 
-    /* ══════════════════════════════
-       게임 화면
-    ══════════════════════════════ */
+    /* ── Game Screen ── */
+    .stage-bar {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+    .stage-pill {
+      display: inline-block;
+      padding: 4px 20px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #6c63ff, #9b59b6);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #fff;
+    }
+
     .game-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 22px;
+      margin-bottom: 16px;
     }
-
     .turn-badge {
       background: #161628;
       border: 1px solid #2a2a4a;
       border-radius: 20px;
-      padding: 6px 16px;
-      font-size: 0.85rem;
+      padding: 5px 14px;
+      font-size: 0.82rem;
       color: #9090c0;
     }
     .turn-badge strong { color: #e8e8f0; }
+    .score-badge { font-size: 1.5rem; font-weight: 800; color: #6c63ff; }
 
-    .score-badge {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: #6c63ff;
-    }
-
-    /* 게이지 */
-    .gauge-wrap { margin-bottom: 28px; }
-
+    /* Gauge */
+    .gauge-wrap { margin-bottom: 22px; }
     .gauge-meta {
       display: flex;
       justify-content: space-between;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: #6060a0;
-      margin-bottom: 7px;
+      margin-bottom: 6px;
     }
-
     .gauge-track {
       width: 100%;
-      height: 18px;
+      height: 16px;
       background: #161628;
-      border-radius: 9px;
+      border-radius: 8px;
       border: 1px solid #2a2a4a;
       overflow: hidden;
-      position: relative;
     }
-
     .gauge-fill {
       height: 100%;
       width: 0%;
-      border-radius: 9px;
+      border-radius: 8px;
       background: linear-gradient(90deg, #6c63ff, #e040fb);
       transition: width 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
       position: relative;
@@ -149,17 +138,17 @@
       content: '';
       position: absolute;
       inset: 2px 4px;
-      border-radius: 6px;
+      border-radius: 5px;
       background: rgba(255,255,255,0.15);
     }
 
-    /* 점수 팝업 */
+    /* Score popup */
     .score-popup {
       position: fixed;
       font-size: 2rem;
       font-weight: 900;
       pointer-events: none;
-      z-index: 999;
+      z-index: 9999;
       animation: popUp 0.9s ease forwards;
     }
     @keyframes popUp {
@@ -168,13 +157,12 @@
       100% { transform: translateY(-60px) scale(0.9); opacity: 0; }
     }
 
-    /* 선택지 카드 */
-    .choices { display: flex; gap: 8px; margin-bottom: 20px; }
-
+    /* Choice cards */
+    .choices { display: flex; gap: 8px; margin-bottom: 16px; }
     .card {
       flex: 1;
-      min-height: 110px;
-      border-radius: 16px;
+      min-height: 108px;
+      border-radius: 14px;
       border: 2px solid #2a2a4a;
       background: #131328;
       cursor: pointer;
@@ -182,153 +170,154 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 5px;
       transition: transform 0.22s, border-color 0.22s, box-shadow 0.22s;
       user-select: none;
-      perspective: 600px;
+      position: relative;
     }
     .card:hover:not(.locked) {
       transform: translateY(-6px);
       border-color: #6c63ff;
-      box-shadow: 0 12px 30px rgba(108, 99, 255, 0.3);
+      box-shadow: 0 10px 28px rgba(108,99,255,0.3);
     }
     .card.locked { cursor: default; }
-
-    .card-label {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #5050a0;
-    }
-    .card-icon {
-      font-size: 2rem;
-      line-height: 1;
-      transition: transform 0.3s;
-    }
+    .card-label { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.1em; color: #5050a0; }
+    .card-icon  { font-size: 1.8rem; line-height: 1; transition: transform 0.25s, opacity 0.25s; }
     .card-value {
-      font-size: 1.7rem;
+      font-size: 1.55rem;
       font-weight: 900;
       opacity: 0;
       transform: scale(0.5);
       transition: opacity 0.25s 0.1s, transform 0.25s 0.1s;
     }
-
-    .card.revealed .card-icon { transform: scale(0); opacity: 0; transition: transform 0.2s, opacity 0.2s; }
+    .card.revealed .card-icon  { transform: scale(0); opacity: 0; }
     .card.revealed .card-value { opacity: 1; transform: scale(1); }
-
-    .card.chosen  { border-color: #6c63ff; background: #1a1a38; }
-    .card.pos     { border-color: #22c55e; }
+    .card.chosen { border-color: #6c63ff; background: #1a1a38; }
+    .card.pos    { border-color: #22c55e; }
     .card.pos .card-value { color: #22c55e; }
-    .card.neg     { border-color: #ef4444; }
+    .card.neg    { border-color: #ef4444; }
     .card.neg .card-value { color: #ef4444; }
 
-    /* 결과 텍스트 */
-    .result {
-      min-height: 38px;
-      text-align: center;
-      font-size: 1.25rem;
-      font-weight: 800;
-      letter-spacing: 0.02em;
-      margin-bottom: 18px;
-      transition: opacity 0.2s;
+    /* Special card (Stage 3) */
+    .card.special {
+      border-color: #fbbf24;
+      background: #1c1600;
+      box-shadow: 0 0 14px rgba(251,191,36,0.25);
+      animation: specialPulse 2s ease-in-out infinite;
     }
+    @keyframes specialPulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(251,191,36,0.2); }
+      50%       { box-shadow: 0 0 22px rgba(251,191,36,0.5); }
+    }
+    .card.special .card-label { color: #fbbf24; }
+    .card.special:hover:not(.locked) {
+      transform: translateY(-6px);
+      border-color: #fbbf24;
+      box-shadow: 0 10px 28px rgba(251,191,36,0.45);
+    }
+    .card.special.pos { border-color: #fbbf24; }
+    .card.special.pos .card-value { color: #fbbf24; }
+    .card.special.locked { animation: none; }
+
+    /* Result */
+    .result { min-height: 34px; text-align: center; font-size: 1.15rem; font-weight: 800; margin-bottom: 14px; }
     .result.pos { color: #22c55e; }
     .result.neg { color: #ef4444; }
+    .next-btn-wrap { text-align: center; min-height: 50px; }
 
-    .next-btn-wrap { text-align: center; min-height: 54px; }
-
-    /* ══════════════════════════════
-       종료 화면
-    ══════════════════════════════ */
+    /* ── End Screen ── */
     #end-screen { text-align: center; }
-
-    .end-title {
-      font-size: 2rem;
-      font-weight: 900;
-      margin-bottom: 6px;
-    }
-
+    .end-title { font-size: 2rem; font-weight: 900; margin-bottom: 4px; }
     .end-score-ring {
-      width: 140px;
-      height: 140px;
+      width: 130px;
+      height: 130px;
       border-radius: 50%;
       border: 4px solid #6c63ff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      margin: 24px auto;
+      margin: 18px auto;
       background: #161628;
-      box-shadow: 0 0 40px rgba(108, 99, 255, 0.3);
+      box-shadow: 0 0 40px rgba(108,99,255,0.3);
     }
-    .end-score-num {
-      font-size: 3rem;
-      font-weight: 900;
-      color: #6c63ff;
-      line-height: 1;
-    }
-    .end-score-label { font-size: 0.75rem; color: #6060a0; margin-top: 2px; }
+    .end-score-num   { font-size: 2.8rem; font-weight: 900; color: #6c63ff; line-height: 1; }
+    .end-score-label { font-size: 0.72rem; color: #6060a0; margin-top: 2px; }
 
-    .end-msg {
-      color: #9090c0;
-      font-size: 0.95rem;
-      margin-bottom: 36px;
-      line-height: 1.6;
+    .pass-msg { color: #a0a0c0; font-size: 0.9rem; margin-bottom: 22px; line-height: 1.6; }
+
+    /* Fail */
+    .fail-text { font-size: 1.5rem; font-weight: 900; color: #ef4444; margin: 8px 0 10px; }
+    .fail-img  { width: 150px; height: auto; border-radius: 14px; display: block; margin: 0 auto 20px; }
+
+    /* Stage 3 clear */
+    .clear-msg {
+      font-size: 1.2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fbbf24, #e040fb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 22px;
+    }
+
+    /* Confetti */
+    .confetti-piece {
+      position: fixed;
+      border-radius: 2px;
+      top: -20px;
+      pointer-events: none;
+      z-index: 9998;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(800deg); opacity: 0; }
     }
   </style>
 </head>
 <body>
 
-<!-- 배경 파티클 -->
 <div class="bg" id="bg"></div>
 
-<!-- ── 시작 화면 ── -->
+<!-- ── Start Screen ── -->
 <div class="screen active" id="start-screen">
   <div class="start-logo">님운몇?</div>
-  <button class="btn" onclick="startGame()">게임 시작</button>
+  <button class="btn btn-purple" onclick="startStage(1)">게임 시작</button>
 </div>
 
-<!-- ── 게임 화면 ── -->
+<!-- ── Game Screen ── -->
 <div class="screen" id="game-screen">
+  <div class="stage-bar"><span class="stage-pill" id="stage-pill">1단계</span></div>
   <div class="game-header">
     <div class="turn-badge">턴 <strong id="turn-now">1</strong> / 10</div>
     <div class="score-badge" id="score-now">0</div>
   </div>
-
   <div class="gauge-wrap">
-    <div class="gauge-meta">
-      <span>점수</span><span>100</span>
-    </div>
-    <div class="gauge-track">
-      <div class="gauge-fill" id="gauge-fill"></div>
-    </div>
+    <div class="gauge-meta"><span>점수</span><span>100</span></div>
+    <div class="gauge-track"><div class="gauge-fill" id="gauge-fill"></div></div>
   </div>
-
   <div class="choices" id="choices"></div>
-
-  <div class="result" id="result"></div>
-
+  <div class="result"  id="result"></div>
   <div class="next-btn-wrap">
-    <button class="btn" id="next-btn" style="display:none" onclick="nextTurn()">다음 턴 →</button>
+    <button class="btn btn-purple" id="next-btn" style="display:none" onclick="nextTurn()">다음 턴 →</button>
   </div>
 </div>
 
-<!-- ── 종료 화면 ── -->
+<!-- ── End Screen ── -->
 <div class="screen" id="end-screen">
   <div class="end-title" id="end-title"></div>
   <div class="end-score-ring">
-    <div class="end-score-num" id="end-score"></div>
+    <div class="end-score-num"   id="end-score"></div>
     <div class="end-score-label">점수</div>
   </div>
-  <p class="end-msg" id="end-msg"></p>
-  <button class="btn" onclick="startGame()">다시하기</button>
+  <div id="end-content"></div>
 </div>
 
 <script>
-  /* ── 배경 파티클 생성 ── */
+  /* ── Background particles ── */
   (function () {
     const bg = document.getElementById('bg');
-    const colors = ['#6c63ff', '#9b59b6', '#e040fb', '#22c55e'];
+    const colors = ['#6c63ff','#9b59b6','#e040fb','#22c55e'];
     for (let i = 0; i < 18; i++) {
       const s = document.createElement('span');
       const size = 40 + Math.random() * 120;
@@ -343,109 +332,185 @@
     }
   })();
 
-  /* ── 게임 상태 ── */
-  let score = 0;
-  let turn  = 1;
-  let locked = false;
-  let choiceValues = [];
+  /* ── Stage configs ──
+     Stage 1: 3 choices, neg 35%, pos +1~+10, neg -1~-7
+     Stage 2: 3 choices, neg 45%, pos +1~+9,  neg -1~-7
+     Stage 3: 4 choices, neg 50%, pos +1~+9,  neg -1~-7, special 10%/turn
+  */
+  const CFG = {
+    1: { count: 3, negProb: 0.35, posMax: 10, negMax: 7, special: false },
+    2: { count: 3, negProb: 0.45, posMax: 9,  negMax: 7, special: false },
+    3: { count: 4, negProb: 0.50, posMax: 9,  negMax: 7, special: true  },
+  };
 
-  /* ── 화면 전환 ── */
+  let score = 0, turn = 1, stage = 1, locked = false;
+  let choiceValues = [], specialFlags = [];
+
+  /* ── Screen switcher ── */
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    const el = document.getElementById(id);
-    el.classList.add('active');
+    document.getElementById(id).classList.add('active');
   }
 
-  /* ── 선택지 생성 (+1~10, -1~-7, 양수 확률 65%) ── */
+  /* ── Start / restart a stage ── */
+  function startStage(s) {
+    stage  = s;
+    score  = 0;
+    turn   = 1;
+    locked = false;
+    document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('result').textContent = '';
+    document.getElementById('result').className   = 'result';
+    document.getElementById('gauge-fill').style.width = '0%';
+    document.getElementById('stage-pill').textContent = s + '단계';
+    updateHUD();
+    choiceValues = makeChoices();
+    renderChoices();
+    showScreen('game-screen');
+  }
+
+  /* ── Generate choices ── */
   function makeChoices() {
-    let vals;
+    const cfg = CFG[stage];
+    let vals, specs;
+
     do {
-      vals = Array.from({ length: 4 }, () =>
-        Math.random() < 0.65
-          ? Math.floor(Math.random() * 10) + 1          // +1 ~ +10
-          : -(Math.floor(Math.random() * 7) + 1)        // -1 ~ -7
-      );
-    } while (!validChoices(vals));
+      vals  = [];
+      specs = Array(cfg.count).fill(false);
+
+      /* Stage 3: 10% chance one random slot becomes special */
+      let specialSlot = -1;
+      if (cfg.special && Math.random() < 0.10) {
+        specialSlot = Math.floor(Math.random() * cfg.count);
+      }
+
+      for (let i = 0; i < cfg.count; i++) {
+        if (i === specialSlot) {
+          specs[i] = true;
+          vals.push(Math.floor(Math.random() * cfg.posMax) + 1); // always +
+        } else if (Math.random() < cfg.negProb) {
+          vals.push(-(Math.floor(Math.random() * cfg.negMax) + 1));
+        } else {
+          vals.push(Math.floor(Math.random() * cfg.posMax) + 1);
+        }
+      }
+    } while (!vals.some(v => v > 0)); // guarantee at least one positive
+
+    specialFlags = specs;
     return vals;
   }
 
-  /* 제약: 양수 최솟값 > 음수 절댓값 최댓값 (둘 다 존재할 때만) */
-  function validChoices(vals) {
-    const pos = vals.filter(v => v > 0);
-    const neg = vals.filter(v => v < 0).map(v => -v);
-    if (!pos.length || !neg.length) return true;
-    return Math.min(...pos) > Math.max(...neg);
-  }
-
-  /* ── 선택지 렌더 ── */
+  /* ── Render choice cards ── */
   function renderChoices() {
-    const wrap = document.getElementById('choices');
+    const cfg   = CFG[stage];
+    const wrap  = document.getElementById('choices');
+    const labels = ['A','B','C','D'];
     wrap.innerHTML = '';
-    ['A', 'B', 'C', 'D'].forEach((lbl, i) => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.id = `card-${i}`;
+
+    for (let i = 0; i < cfg.count; i++) {
+      const isSpec = specialFlags[i];
+      const card   = document.createElement('div');
+      card.className = 'card' + (isSpec ? ' special' : '');
+      card.id        = `card-${i}`;
       card.innerHTML = `
-        <span class="card-label">${lbl}</span>
-        <span class="card-icon">❓</span>
+        <span class="card-label">${isSpec ? '★ 특별' : labels[i]}</span>
+        <span class="card-icon">${isSpec ? '⭐' : '❓'}</span>
         <span class="card-value"></span>
       `;
       card.addEventListener('click', () => pick(i));
       wrap.appendChild(card);
-    });
+    }
   }
 
-  /* ── 선택 처리 ── */
+  /* ── Player picks a card ── */
   function pick(idx) {
     if (locked) return;
     locked = true;
 
-    const labels = ['A', 'B', 'C'];
-
-    /* 모든 카드 공개 */
+    /* Reveal all cards */
     choiceValues.forEach((v, i) => {
       const card = document.getElementById(`card-${i}`);
       card.classList.add('locked', 'revealed', v > 0 ? 'pos' : 'neg');
-      if (i === idx) card.classList.add('chosen');
+      if (i === idx)      card.classList.add('chosen');
+      if (specialFlags[i]) card.classList.add('special');
       card.querySelector('.card-value').textContent = (v > 0 ? '+' : '') + v;
     });
 
     const gained = choiceValues[idx];
-    const prevScore = score;
     score = Math.min(100, Math.max(0, score + gained));
 
-    /* 결과 텍스트 */
+    /* Result text */
     const res = document.getElementById('result');
     res.textContent = gained > 0 ? `+${gained} 점 획득!` : `${gained} 점 감소!`;
-    res.className = 'result ' + (gained > 0 ? 'pos' : 'neg');
+    res.className   = 'result ' + (gained > 0 ? 'pos' : 'neg');
 
-    /* 점수 팝업 */
     spawnPopup(gained, document.getElementById(`card-${idx}`));
-
-    /* 게이지·점수 갱신 */
     updateHUD();
 
-    /* 종료 판정 */
-    if (score >= 100) {
-      setTimeout(() => endGame(true), 1100);
-    } else if (turn >= 10) {
-      setTimeout(() => endGame(false), 1100);
+    if (score >= 100 || turn >= 10) {
+      setTimeout(endStage, 1100);
     } else {
       document.getElementById('next-btn').style.display = 'inline-block';
     }
   }
 
-  /* ── HUD 갱신 ── */
+  /* ── End of stage logic ── */
+  function endStage() {
+    const passed  = score >= 50;
+    const content = document.getElementById('end-content');
+    document.getElementById('end-score').textContent = score;
+    content.innerHTML = '';
+
+    if (!passed) {
+      /* ── Fail (any stage) ── */
+      document.getElementById('end-title').textContent = '게임 종료';
+      content.innerHTML = `
+        <div class="fail-text">허~~~접♥</div>
+        <img class="fail-img" src="heojup.png" alt="허접" onerror="this.style.display='none'" />
+        <br>
+        <button class="btn btn-purple" onclick="startStage(1)">다시하기</button>
+      `;
+
+    } else if (stage === 1) {
+      /* ── Stage 1 clear ── */
+      document.getElementById('end-title').textContent = '🎉 1단계 클리어!';
+      content.innerHTML = `
+        <p class="pass-msg">2단계로 넘어갈 준비가 됐나요?</p>
+        <button class="btn btn-gold" onclick="startStage(2)">2단계 시작 →</button>
+      `;
+
+    } else if (stage === 2) {
+      /* ── Stage 2 clear ── */
+      document.getElementById('end-title').textContent = '🎉 2단계 클리어!';
+      content.innerHTML = `
+        <p class="pass-msg">마지막 3단계에 도전하세요!</p>
+        <button class="btn btn-gold" onclick="startStage(3)">3단계 시작 →</button>
+      `;
+
+    } else {
+      /* ── Stage 3 clear ── */
+      document.getElementById('end-title').textContent = '🏆 전 단계 클리어!';
+      content.innerHTML = `
+        <div class="clear-msg">님 혹시 신임??</div>
+        <button class="btn btn-purple" onclick="startStage(1)">다시하기</button>
+      `;
+      spawnConfetti();
+    }
+
+    showScreen('end-screen');
+  }
+
+  /* ── HUD update ── */
   function updateHUD() {
-    document.getElementById('turn-now').textContent  = turn;
-    document.getElementById('score-now').textContent = score;
+    document.getElementById('turn-now').textContent   = turn;
+    document.getElementById('score-now').textContent  = score;
     document.getElementById('gauge-fill').style.width = score + '%';
   }
 
-  /* ── 점수 팝업 ── */
+  /* ── Score popup ── */
   function spawnPopup(val, anchor) {
     const rect = anchor.getBoundingClientRect();
-    const el = document.createElement('div');
+    const el   = document.createElement('div');
     el.className = 'score-popup';
     el.textContent = (val > 0 ? '+' : '') + val;
     el.style.color = val > 0 ? '#22c55e' : '#ef4444';
@@ -455,39 +520,37 @@
     el.addEventListener('animationend', () => el.remove());
   }
 
-  /* ── 다음 턴 ── */
+  /* ── Confetti (Stage 3 clear) ── */
+  function spawnConfetti() {
+    const colors = ['#6c63ff','#e040fb','#22c55e','#fbbf24','#ef4444','#38bdf8','#f472b6'];
+    for (let i = 0; i < 100; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'confetti-piece';
+        const size = 7 + Math.random() * 9;
+        el.style.cssText = `
+          left:${Math.random() * 100}vw;
+          width:${size}px; height:${size}px;
+          background:${colors[Math.floor(Math.random() * colors.length)]};
+          border-radius:${Math.random() > 0.5 ? '50%' : '2px'};
+          animation-duration:${1.4 + Math.random() * 2}s;
+        `;
+        document.body.appendChild(el);
+        el.addEventListener('animationend', () => el.remove());
+      }, i * 25);
+    }
+  }
+
+  /* ── Next turn ── */
   function nextTurn() {
     turn++;
     locked = false;
     document.getElementById('next-btn').style.display = 'none';
     document.getElementById('result').textContent = '';
-    document.getElementById('result').className = 'result';
-    updateHUD();
-    choiceValues = makeChoices();
-    renderChoices();
-  }
-
-  /* ── 게임 종료 ── */
-  function endGame(clear) {
-    document.getElementById('end-score').textContent = score;
-    document.getElementById('end-title').textContent = clear ? '🎉 클리어!' : '게임 종료';
-    document.getElementById('end-msg').textContent   = score >= 50 ? '님 혹시 신임?' : '허~~접♥';
-    showScreen('end-screen');
-  }
-
-  /* ── 게임 시작 / 재시작 ── */
-  function startGame() {
-    score  = 0;
-    turn   = 1;
-    locked = false;
-    document.getElementById('next-btn').style.display = 'none';
-    document.getElementById('result').textContent = '';
     document.getElementById('result').className   = 'result';
     updateHUD();
-    document.getElementById('gauge-fill').style.width = '0%';
     choiceValues = makeChoices();
     renderChoices();
-    showScreen('game-screen');
   }
 </script>
 </body>
