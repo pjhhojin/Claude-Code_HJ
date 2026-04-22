@@ -63,6 +63,8 @@
     .btn:active { transform: translateY(0); }
     .btn-purple { background: linear-gradient(135deg, #6c63ff 0%, #9b59b6 100%); }
     .btn-gold   { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+    .btn-ghost  { background: transparent; border: 2px solid #3a3a5a; color: #9090c0; padding: 11px 36px; }
+    .btn-ghost:hover { border-color: #6c63ff; color: #e8e8f0; box-shadow: 0 8px 28px rgba(108,99,255,0.2); }
 
     /* ── Start Screen ── */
     #start-screen { text-align: center; }
@@ -334,12 +336,12 @@
 
   /* ── Stage configs ──
      Stage 1: 3 choices, neg 35%, pos +1~+10, neg -1~-7
-     Stage 2: 3 choices, neg 45%, pos +1~+9,  neg -1~-7
+     Stage 2: 3 choices, neg 40%, pos +1~+9,  neg -1~-7
      Stage 3: 4 choices, neg 50%, pos +1~+9,  neg -1~-7, special 10%/turn
   */
   const CFG = {
     1: { count: 3, negProb: 0.35, posMax: 10, negMax: 7, special: false },
-    2: { count: 3, negProb: 0.45, posMax: 9,  negMax: 7, special: false },
+    2: { count: 3, negProb: 0.40, posMax: 9,  negMax: 7, special: false },
     3: { count: 4, negProb: 0.50, posMax: 9,  negMax: 7, special: true  },
   };
 
@@ -462,14 +464,25 @@
     content.innerHTML = '';
 
     if (!passed) {
-      /* ── Fail (any stage) ── */
+      /* ── Fail ── */
       document.getElementById('end-title').textContent = '게임 종료';
-      content.innerHTML = `
-        <div class="fail-text">허~~~접♥</div>
-        <img class="fail-img" src="heojup.png" alt="허접" onerror="this.style.display='none'" />
-        <br>
-        <button class="btn btn-purple" onclick="startStage(1)">다시하기</button>
-      `;
+      if (stage === 1) {
+        content.innerHTML = `
+          <div class="fail-text">허~~~접♥</div>
+          <img class="fail-img" src="heojup.png" alt="허접" onerror="this.style.display='none'" />
+          <br>
+          <button class="btn btn-purple" onclick="startStage(1)">다시하기</button>
+        `;
+      } else {
+        content.innerHTML = `
+          <div class="fail-text">허~~~접♥</div>
+          <img class="fail-img" src="heojup.png" alt="허접" onerror="this.style.display='none'" />
+          <br>
+          <button class="btn btn-purple" onclick="startStage(${stage})">다시하기</button>
+          <br><br>
+          <button class="btn btn-ghost" onclick="showScreen('start-screen')">처음으로</button>
+        `;
+      }
 
     } else if (stage === 1) {
       /* ── Stage 1 clear ── */
